@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.MapperPermission">
+
+        <select id="selectPermissionList" resultType="permission">
+            select * from t_permission5
+        </select>
+
+
+        <insert id="addPermission" parameterType="permission">
+            insert into t_permission5(
+                    name,
+                    url,
+                    pid,
+                    type,
+                    createDate
+                  ) values(
+                    #{name},
+                    #{url},
+                    #{pid},
+                    #{type},
+                    #{createDate}
+                  )
+        </insert>
+
+
+        <select id="selectPermissionById" parameterType="int" resultType="permission">
+            select * from t_permission5 where id = #{id}
+        </select>
+
+        <update id="updatePermission" parameterType="permission">
+            update t_permission5 set
+                name = #{name},
+                url = #{url},
+                pid  = #{pid},
+                type = #{type},
+                createDate = #{createDate},
+                updateDate = #{updateDate}
+            where id = #{id}
+        </update>
+
+    <delete id="deletePermission" parameterType="int">
+        delete from t_permission5 where id = #{id}
+    </delete>
+</mapper>

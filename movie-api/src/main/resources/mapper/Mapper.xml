@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.MapperInterface">
+
+    <sql id="SQLWhere">
+        <where>
+            <if test="userName != null and userName != '' ">
+                and username like concat('%',#{userName},'%')
+
+            </if>
+            <if test="realName != null and realName != '' ">
+                and realName like concat('%',#{realName},'%')
+
+            </if>
+
+            <if test="phoneNumber != null and phoneNumber != '' ">
+                and phoneNumber like concat('%',#{phoneNumber},'%')
+
+            </if>
+
+            <if test="email != null and email != '' ">
+                and email like concat('%',#{email},'%')
+
+            </if>
+
+            <if test="sex != null">
+                and sex = #{sex}
+
+            </if>
+
+
+
+            <if test="minBirthday != null">
+                <![CDATA[
+                  and birthday >= #{minBirthday}
+                ]]>
+            </if>
+            <if test="maxBirthday != null">
+                <![CDATA[
+                  and birthday <= #{maxBirthday}
+                ]]>
+            </if>
+
+
+
+            <if test="minCreateDate != null">
+                <![CDATA[
+                  and createDate >= #{minCreateDate}
+                ]]>
+            </if>
+            <if test="maxCreateDate != null">
+                <![CDATA[
+                  and createDate <= #{maxCreateDate}
+                ]]>
+            </if>
+
+
+
+            <if test="minUpdateDate != null">
+                <![CDATA[
+                  and updateDate >= #{minUpdateDate}
+                ]]>
+            </if>
+            <if test="maxUpdateDate != null">
+                <![CDATA[
+                  and updateDate <= #{maxUpdateDate}
+                ]]>
+            </if>
+
+
+        </where>
+    </sql>
+
+
+    <select id="selectUserListCount" parameterType="userQuery" resultType="long">
+        select count(*) from t_user5
+        <include refid="SQLWhere"></include>
+    </select>
+
+    <select id="selectUserList" parameterType="userQuery" resultType="user">
+        select * from t_user5
+        <include refid="SQLWhere"></include>
+        limit #{start},#{length}
+    </select>
+
+    <insert id="addUserOnOnePage" parameterType="user">
+        insert into t_user5(realName,
+                            username,sex,
+                            password,
+                            email,
+                            phoneNumber,
+                            filePath,
+                            birthday,
+                            createDate)
+                VALUES
+                  (
+                    #{realName},
+                    #{username},
+                    #{sex},
+                    #{password},
+                    #{email},
+                    #{phoneNumber},
+                    #{filePath},
+                    #{birthday},
+                    #{createDate}
+                  )
+    </insert>
+
+    <select id="toUpdateUserOnOnePage" parameterType="int" resultType="user">
+        select * from t_user5 where id = #{id}
+    </select>
+
+    <update id="updateUserOnOnePage" parameterType="user">
+        update t_user5 set
+
+            realName=#{realName},
+            username=#{username},
+            password=#{password},
+            phoneNumber=#{phoneNumber},
+            email=#{email},
+            createDate=#{createDate},
+            birthday=#{birthday},
+            updateDate=#{updateDate},
+            sex=#{sex},
+            filePath=#{filePath}
+
+        where id = #{id}
+    </update>
+
+
+    <delete id="deleteUser" parameterType="int">
+        delete from t_user5 where id = #{id}
+    </delete>
+</mapper>

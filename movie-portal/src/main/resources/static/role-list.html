@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+
+    <script src="js/bootbox.min.js"></script>
+    <script src="js/bootbox.locales.min.js"></script>
+
+    <!-- 引入DataTables的css文件 -->
+    <link href="DataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <script src="DataTables/js/jquery.dataTables.min.js"></script>
+
+    <!-- 引入fileinput文件上传插件的css文件和js文件 -->
+    <link href="bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet" />
+    <script src="bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="bootstrap-fileinput/js/locales/zh.js"></script>
+
+
+    <!-- 日期插件 -->
+    <link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+    <script src="bootstrap-datetimepicker/js/moment-with-locales.js"></script>
+    <script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+
+    <!-- 下拉框 -->
+    <script src="bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+    <link href="bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet"/>
+
+
+
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">电影管理系统</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="movie-list.html">电影管理</a></li>
+                <li><a href="type-list.html">类型管理</a></li>
+                <li><a href="area-list.html">产地管理</a></li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle"
+                                        data-toggle="dropdown">系统管理<b class="caret"></b>
+                </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="role-list.html">角色</a></li>
+                        <li><a href="user-list.html">用户</a></li>
+                        <li><a href="permission-list.html">权限</a></li>
+                    </ul></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <!-- 条件查询 +表头 -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            条件查询
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">角色名称:</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="name" placeholder="请输入角色名称">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">状态:</label>
+                                <div class="col-sm-10">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="status" value="1"/>启用
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="status" value="2"/>禁用
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">创建日期:</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="minCreateDate" />
+                                        <span class="input-group-addon">至</span>
+                                        <input type="text" class="form-control" id="maxCreateDate" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label  class="col-sm-2 control-label">修改日期:</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="minUpdateDate"/>
+                                        <span class="input-group-addon">至</span>
+                                        <input type="text" class="form-control" id="maxUpdateDate"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div style="padding-left:110px">
+                            <button type="button" onclick="search()" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-search"></span>查询
+                            </button>
+                            &nbsp;
+                            <button type="reset" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- 列表面板 -->
+        <div class="panel panel-primary">
+            <div class="panel-heading">角色列表</div>
+            <div class="panel-body">
+                <div style="margin-bottom:10px">
+                    <button type="button" onclick="showAddRoleDiv()" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-plus"></span>新增
+                    </button>
+                    <button type="button" onclick="batchDelete()" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-minus"></span>批量删除
+                    </button>
+                </div>
+                <table id="roleTable" class="table table-striped table-bordered table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" />
+                        </th>
+                        <th>角色名</th>
+                        <th>状态</th>
+                        <th>描述</th>
+                        <th>创建日期</th>
+                        <th>修改日期</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 添加 -->
+    <div id="addRoleDiv"  style="display:none">
+
+        <form class="form-horizontal" >
+            <div class="panel-body" >
+
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">名称:</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="addName" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">状态:</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="addStatus" value="1"/>启用
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="addStatus" value="2"/>禁用
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">描述</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="addRemark" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <!--修改-->
+    <div id="updateRoleDiv"  style="display:none">
+
+        <form class="form-horizontal" >
+            <div class="panel-body" >
+                <input type="text" class="form-control" id="updateId" readonly/>
+                <input type="text" class="form-control" id="updateCreateDate" readonly/>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">名称:</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="updateName" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">状态:</label>
+                    <div class="col-sm-10">
+                        <label class="radio-inline">
+                            <input type="radio" name="updateStatus" value="1"/>启用
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="updateStatus" value="2"/>禁用
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">描述</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" id="updateRemark" />
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+</body>
+
+<!--查询-->
+<script type="text/javascript">
+
+    $(function(){
+        selectRoleList(1);
+
+
+        initTimePicker("minCreateDate");
+        initTimePicker("maxCreateDate");
+
+        initTimePicker("minUpdateDate");
+        initTimePicker("maxUpdateDate");
+
+
+    })
+
+    function search(){
+        //重新使用ajax加载数据
+        roleTable.ajax.reload();
+    }
+
+    function initTimePicker(id){
+        var format = "YYYY-MM-DD";
+        $("#" + id).datetimepicker({
+            format:format,
+            locale:"zh-CN",
+            showClear:true
+        });
+    }
+
+
+    var roleTable;
+    function selectRoleList(pageIndex){
+        roleTable = $("#roleTable").DataTable({
+                //开启服务端模式
+                serverSide:true,
+                //开启是否显示处理状态
+                processing:true,
+                //进行国际化处理配置
+                language: {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": "以升序排列此列",
+                        "sSortDescending": "以降序排列此列"
+                    }
+                },
+                //开启是否显示搜索框
+                searching:true,
+                //设置每页显示条数下拉框的值
+                lengthMenu:[2,5,10,15],
+                ajax:{
+                    //设置请求的地址
+                    url:"http://localhost:8081//RoleController/selectRoleList",
+                    dataSrc:function(f){
+                        if(f.status==200){
+                            f.draw =f.data.draw;
+                            f.recordsTotal=f.data.recordsTotal;
+                            f.recordsFiltered=f.data.recordsFiltered;
+                            return f.data.data;
+                        }else{
+                            return "";
+                        }
+                    },
+                    "data":function(p){
+                        //获取查询条件的值
+                        //复选框
+                        /*var personArr = $("[name=person]:checked");
+                        var person = "";
+                        if(personArr.length > 0){
+                            personArr.each(function(i,e){
+                                //i代表当前循环的下标
+                                //e代表当前遍历的元素
+                                person += e.value + ",";
+                            });
+                            person = person.substring(0,person.length-1);
+                        }
+                        p.person = person;*/
+
+                        p.name = $("#name").val();
+
+                        p.status = $("[name=status]:checked").val();
+
+
+                        p.minCreateDate = $("#minCreateDate").val();
+                        p.maxCreateDate = $("#maxCreateDate").val();
+
+                        p.minUpdateDate = $("#minUpdateDate").val();
+                        p.maxUpdateDate = $("#maxUpdateDate").val();
+
+
+
+
+                    }
+                },
+
+                "columns":[
+                    {
+                        "data":"id",
+                        "render":function(data){
+                            return "<input type=\"checkbox\" name=\"id\" value=\"" + data + "\" />";
+                        }
+                    },
+                    {"data":"name"},
+                    {"data":"status",
+                        "render":function(data) {
+                            return data == 1?"启用":"禁用";
+                        }
+                    },
+
+                    {"data":"remark"},
+
+                    {"data":"createDate"},
+                    {"data":"updateDate"},
+                    {
+                        data:"id",
+                        render:function(data,type,row){
+                            var buttonHTML = "";
+                            buttonHTML += '<div class="btn-group btn-group-xs">';
+                            buttonHTML += '<button type="button" onclick="showUpdateRoleDiv(' + data + ')" class="btn btn-primary">';
+                            buttonHTML += '<span class="glyphicon glyphicon-pencil"></span>&nbsp;修改';
+                            buttonHTML += '</button>';
+                            buttonHTML += '<button type="button" onclick="deleteRole(' + data + ')" class="btn btn-danger">';
+                            buttonHTML += '<span class="glyphicon glyphicon-trash"></span>&nbsp;删除';
+                            buttonHTML += '</button>';
+                            if(row.status == 1){
+                                buttonHTML += '<button type="button" onclick="updateRoleStatus(' + data + ','+row.status+')" class="btn btn-warning">';
+                                buttonHTML += '<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;禁用';
+                                buttonHTML += '</button>';
+                            }else{
+                                buttonHTML += '<button type="button" onclick="updateRoleStatus(' + data + ','+row.status+')" class="btn btn-success">';
+                                buttonHTML += '<span class="glyphicon glyphicon-ok-circle"></span>&nbsp;启用';
+                                buttonHTML += '</button>';
+                            }
+                            buttonHTML += '</div>';
+                            return buttonHTML;
+                        }
+                    }
+                ]
+            }
+        );
+    }
+</script>
+
+<!--状态-->
+<script>
+    function updateRoleStatus(id,status){
+        alert(id);
+        $.ajax({
+            url:"http://localhost:8081/RoleController/updateRoleStatus",
+            type:"post",
+            data:{"id":id},
+            dataType:"json",
+            success:function(result){
+                if(result.status){
+                    search();
+                }else{
+                    alert(status==1?"禁用失败!":"启用失败!");
+                }
+            },
+            error:function(){
+                alert(status==1?"禁用失败!":"启用失败!");
+            }
+        })
+    }
+</script>
+
+
+<!--添加-->
+<script>
+    var addRoleDivHTML
+    $(function(){
+        addRoleDivHTML = $("#addRoleDiv").html();
+
+    })
+    function showAddRoleDiv(){
+
+        bootbox.confirm({
+            title:"新增药品",
+            message:$("#addRoleDiv form"),
+            size:"lg",
+            scrollable:true,
+            callback:function(result){
+                //如果点击了确认按钮，则提交新增div表单中的数据
+                if(result){
+
+                    var param = {};
+                    //【1】获取新增div表单中的值
+
+                    param.name = $("#addName").val();
+
+                    param.remark = $("#addRemark").val();
+
+                    param.status = $("[name=addStatus]:checked").val();
+
+
+                    /* //获取复选框
+                     var person = "";
+                     var personArr = $("[name=addPerson]:checked");
+                     if(personArr.length > 0 ){
+                         personArr.each(function(i,e){
+                             person += e.value + ",";
+                         });
+                         person = person.substring(0,person.length-1);
+                         param.person = person;
+                     }*/
+
+                    //发起新增的ajax请求
+                    $.ajax({
+
+                        url:"http://localhost:8081/RoleController/addRoleOnOnePage",
+                        type:"post",
+                        dataType:"json",
+                        data:param,
+                        success:function(result){
+                            if(result.code == 200){
+                                bootbox.alert({
+                                    title:"<b>成功提示</b>",
+                                    message:"恭喜您添加成功!",
+                                    buttons:{
+                                        ok:{
+                                            label:"确定"
+                                        }
+                                    }
+                                });
+                                search();
+                            }
+                        },
+                        error:function(){
+                            alert("新增失败，请联系管理员！");
+                        }
+                    });
+
+                }
+                //重新赋值   以防第二次点添加 不出表格
+                $("#addRoleDiv").html(addRoleDivHTML);
+                //重置时间选择   下拉框 图片域
+
+            },
+
+            buttons:{
+                confirm:{
+                    label:"确认",
+                    className:"btn btn-success"
+                },
+                cancel:{
+                    label:"取消",
+                    className:"btn btn-danger"
+                }
+            }
+        });
+
+    }
+</script>
+
+<!--修改-->
+<script>
+    var updateRoleDivHTML;
+    $(function(){
+
+        updateRoleDivHTML = $("#updateRoleDiv").html();
+
+    })
+
+
+    function showUpdateRoleDiv(id){
+        $.ajax({
+            data:{"id":id},
+            dataType:"json",
+            url:"http://localhost:8081/RoleController/toUpdateRoleOnOnePage",
+            type:"post",
+            success:function(result){
+                bootbox.confirm({
+                    title:"修改信息",
+                    message:$("#updateRoleDiv form"),
+                    size:"lg",
+                    scrollable:true,
+                    callback:function(result){
+
+                        //如果点击了确认按钮，则提交修改div表单中的数据
+                        if(result){
+                                 updateRemark
+                            var p = {};
+
+                            p.id = $("#updateId").val();
+                            p.name = $("#updateName").val();
+                            p.status = $("[name=updateStatus]:checked").val();
+
+                            p.remark = $("#updateRemark").val();
+                            p.createDate = $("#updateCreateDate").val();
+
+
+                            /*//获取复选框
+                            var person = "";
+                            var personArr = $("[name=updatePerson]:checked");
+                            if(personArr.length > 0 ){
+                                personArr.each(function(i,e){
+                                    person += e.value + ",";
+                                });
+                                person = person.substring(0,person.length-1);
+                                param.person = person;
+                            }*/
+
+
+                            //发起新增手机的ajax请求
+                            $.ajax({
+                                url:"http://localhost:8081/RoleController/updateRoleOnOnePage",
+                                type:"post",
+                                dataType:"json",
+                                data:p,
+                                success:function(result){
+                                    if(result.status == 200){
+                                        bootbox.alert({
+                                            title:"<b>成功提示</b>",
+                                            message:"恭喜您修改成功!",
+                                            buttons:{
+                                                ok:{
+                                                    label:"确定"
+                                                }
+                                            }
+                                        });
+                                        search();
+                                    }
+                                },
+                                error:function(){
+                                    alert("修改失败，请联系管理员！");
+                                }
+                            });
+                        }
+
+                        //重新赋值   以防第二次点 不出表格
+                        $("#updateRoleDiv").html(updateRoleDivHTML);
+                        //重置 文件域 时间选择
+
+
+                        /* updateExpiredDate();
+                         updateProducedDate();*/
+                    },
+
+                    buttons:{
+                        confirm:{
+                            label:"确认",
+                            className:"btn btn-success"
+                        },
+                        cancel:{
+                            label:"取消",
+                            className:"btn btn-danger"
+                        }
+                    }
+                });
+
+                /*//初始化修改药品表单中产地下拉框
+                var areaOptionsHTML = "";
+                for(var i = 0 ; i < areaArr.length ; i ++ ){
+                    areaOptionsHTML += "<option value='" + areaArr[i].areaId + "'>" + areaArr[i].areaName + "</option>";
+                }
+                $("#updateDrugArea").append(areaOptionsHTML);
+
+                //初始化修改药品表单中品牌下拉框
+                var brandOptionsHTML = "";
+                for(var i = 0 ; i < brandArr.length ; i ++ ){
+                    brandOptionsHTML += "<option value='" + brandArr[i].brandId + "'>" + brandArr[i].brandName + "</option>";
+                }
+                $("#updateDrugBrand").append(brandOptionsHTML);*/
+
+                var result = result.data;
+                //回显表单中的数据
+                $("#updateId").val(result.id);
+                $("#updateName").val(result.name);
+                $("#updateRemark").val(result.remark);
+                $("#updateCreateDate").val(datetimeFormat_2(result.createDate));
+                //回显单选
+                $("[name=updateStatus][value="+result.status+"]").prop("checked",true);
+
+                /* //回显复选框
+                 $("[name=updatePerson]").each(function(i,e){
+                     if(result.person.indexOf(e.value)!=-1){
+                         e.checked = true;
+                     }
+                 });
+
+                 $("#updateDrugStock").val(result.drugStock);
+                 $("#updateProducedDate").val(datetimeFormat_2(result.producedDate));
+                 $("#updateExpiredDate").val(datetimeFormat_2(result.expiredDate));*/
+
+
+
+
+            },
+            error:function(){
+
+                alert("无法修改   别点了!!!")
+            }
+        })
+
+    }
+
+</script>
+
+
+<!--删除-->
+<script>
+    function deleteRole(id){
+        //弹出一个确认框
+        bootbox.confirm({
+            title:"删除提示",
+            message:"您确定要删除吗?",
+            buttons:{
+                //修改按钮样式
+                confirm:{
+                    label:"确定",
+                    className:"btn btn-success"
+                },
+                //修改按钮样式
+                cancel:{
+                    label:"取消",
+                    className:"btn btn-danger"
+                }
+            },
+            callback:function(result){
+                //如果用户点击了确认按钮
+                if(result){
+                    //发起一个删除的ajax请求
+                    $.ajax({
+                        url:"http://localhost:8081/RoleController/deleteRole",
+                        type:"post",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(result){
+                            if(result.status == 200){
+                                //重新加载表格中的数据
+                                alert("删除成功")
+                                search();
+                            }else{
+                                alert("删除失败!");
+                            }
+                        },
+                        error:function(){
+                            alert("删除失败!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>
+
+</html>

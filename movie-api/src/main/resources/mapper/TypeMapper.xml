@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.TypeMapper">
+
+    <select id="selectTypeListCount" parameterType="TypeQuery"  resultType="long">
+        select count(*) from mtype where isDel = 1
+    </select>
+
+    <select id="selectTypeList" parameterType="TypeQuery" resultType="type">
+        select * from mtype where isDel = 1
+        limit #{start},#{length}
+
+    </select>
+
+
+    <select id="toUpdateType" parameterType="int" resultType="type">
+        select * from mtype where id = #{id}
+    </select>
+
+    <insert id="addType" parameterType="type">
+        insert into mtype (name,createTime,isDel)
+        values(#{name},#{createTime},1)
+    </insert>
+
+    <update id="deleteType" parameterType="int">
+        update mtype set isDel = 0
+            where id = #{id}
+    </update>
+
+    <update id="updateType" parameterType="type">
+        update mtype set name = #{name},updateTime = #{updateTime}
+        where id =#{id}
+    </update>
+
+</mapper>

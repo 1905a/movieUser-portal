@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.MovieMapper">
+
+    <select id="selectMovieListCount" parameterType="MovieQuery"  resultType="long">
+        select count(*) from mmovie where idDel = 1
+    </select>
+
+    <select id="selectMovieList" parameterType="MovieQuery" resultType="Movie">
+        select * from mmovie limit #{start},#{length}
+    </select>
+
+    <insert id="addMovie" parameterType="movie" useGeneratedKeys="true" keyProperty="id">
+        insert into mmovie (name,mins,photo,grade,showTime,introduce,createTime,isDel)
+        values(#{name},#{mins},#{photo},
+              #{grade},#{showTime},#{introduce},#{createTime},1)
+    </insert>
+
+
+    <insert id="addMovieAreaRelation" parameterType="movieArea">
+        insert into mmoviearea (movieId,areaId)
+        values (#{movieId},#{areaId})
+    </insert>
+
+    <insert id="addMovieTypeRelation" parameterType="movieType">
+        insert into mmovietype (movieId,typeId)
+        values (#{movieId},#{typeId})
+    </insert>
+
+    <select id="toUpdateMovie" parameterType="int" resultType="movie">
+        select mm.* ,ma.`name` areaName,ma.id areaId,mt.id typeId,mt.`name` typeName from mmovie mm
+		left join mmoviearea mma on mm.id = mma.movieId
+		left join marea ma on mma.areaId = ma.id
+
+		left join mmovietype mmt on mm.id = mmt.movieId
+		left join mtype mt on mmt.typeId = mt.id
+
+        where mm.id = #{id} and mm.idDel = 1
+    </select>
+
+    <delete id="deleteMovieArea" parameterType="int">
+        delete from mmovieArea where movieId = #{movieId}
+    </delete>
+
+
+    <delete id="deleteMovieType" parameterType="int">
+        delete from mmovieType where movieId = #{movieId}
+    </delete>
+
+
+    <update id="updateMovie" parameterType="movie">
+        update mmovie set name = #{name},mins=#{mins},
+            grade=#{grade},isHot = {isHot},photo = #{photo},
+            showTime = #{showTime},introduce = #{introduce},
+            updateTime = #{updateTime}
+            where id = #{id}
+    </update>
+
+
+    <update id="deleteMovie" parameterType="int">
+        update mmovie set isDel = 0
+            where id = #{id}
+    </update>
+
+
+    <select id="selectTypeList" resultType="type">
+        select * from mtype
+    </select>
+
+
+    <select id="selectAreaList" resultType="area">
+        select * from marea
+    </select>
+</mapper>

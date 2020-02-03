@@ -1,0 +1,1019 @@
+
+<html>
+
+<link href="css/bootstrap.min.css" rel="stylesheet"/>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+
+<script src="js/bootbox.min.js"></script>
+<script src="js/bootbox.locales.min.js"></script>
+
+<!-- 引入DataTables的css文件 -->
+<link href="DataTables/css/jquery.dataTables.min.css" rel="stylesheet" />
+<script src="DataTables/js/jquery.dataTables.min.js"></script>
+
+<!-- 引入fileinput文件上传插件的css文件和js文件 -->
+<link href="bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet" />
+<script src="bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="bootstrap-fileinput/js/locales/zh.js"></script>
+
+
+<!-- 日期插件 -->
+<link href="bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+<script src="bootstrap-datetimepicker/js/moment-with-locales.js"></script>
+<script src="bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+
+<!-- 下拉框 -->
+<script src="bootstrap-select/js/bootstrap-select.min.js"></script>
+<script src="bootstrap-select/js/i18n/defaults-zh_CN.min.js"></script>
+<link href="bootstrap-select/css/bootstrap-select.min.css" rel="stylesheet"/>
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+
+
+<!-- 导航栏 -->
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">电影管理系统</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="movie-list.html">电影管理</a></li>
+                <li><a href="type-list.html">类型管理</a></li>
+                <li><a href="area-list.html">产地管理</a></li>
+                <li class="dropdown"><a href="#" class="dropdown-toggle"
+                                        data-toggle="dropdown">系统管理<b class="caret"></b>
+                </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="role-list.html">角色</a></li>
+                        <li><a href="user-list.html">用户</a></li>
+                        <li><a href="permission-list.html">权限</a></li>
+                    </ul></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+
+<!-- 条件查询+表头 -->
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        条件查询
+    </div>
+    <div class="panel-body">
+        <form class="form-horizontal">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电影名称:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="name" placeholder="请输入电影名称">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电影评分:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="grade" >
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">是否热映:</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="radio" name="isHot" value="1"/>是
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="isHot" value="2"/>否
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">类型:</label>
+                            <div class="col-sm-10">
+                                <select id="typeId" class="form-control">
+                                    <option value="-1">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">上映时间:</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="minShowTime"/>
+                                    <span class="input-group-addon">至</span>
+                                    <input type="text" class="form-control" id="maxShowTime"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label  class="col-sm-2 control-label">地区:</label>
+                            <div class="col-sm-10">
+                                <select id="areaId" class="form-control">
+                                    <option value="-1">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <div class="row">
+                    <div style="padding-left:110px">
+                        <button type="button" onclick="search()" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-search"></span>查询
+                        </button>
+                        &nbsp;
+                        <button type="reset" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-refresh"></span>&nbsp;&nbsp;重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 电影列表面板 -->
+    <div class="panel panel-primary">
+        <div class="panel-heading">电影列表</div>
+        <div class="panel-body">
+            <div style="margin-bottom:10px">
+                <button type="button" onclick="showAddMovieDiv()" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-plus"></span>新增
+                </button>
+                <button type="button" onclick="batchDelete()" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-minus"></span>批量删除
+                </button>
+            </div>
+            <table id="movieTable" class="table table-striped table-bordered table-hover table-condensed">
+                <thead>
+                <tr>
+                    <th>
+                        <input type="checkbox" />
+                    </th>
+                    <th>电影名称</th>
+                    <th>时长</th>
+                    <th>主图</th>
+                    <th>是否热映</th>
+                    <th>评分</th>
+                    <th>简介</th>
+                    <th>上映时间</th>
+                    <th>创建时间</th>
+                    <th>修改时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- 隐藏的新增界面的 -->
+<div id="addMovieDiv"  style="display:none">
+
+    <form class="form-horizontal" >
+        <div class="panel-body" >
+            <!-- 存放路径 -->
+            <input type="text" name="addMoviePath" id="addMoviePath" value="" >
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">电影名称:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="addMovieName" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">时长</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="addMovieMins" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">评分</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="addMovieGrade" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">是否热映:</label>
+                <div class="col-sm-10">
+                    <label class="radio-inline">
+                        <input type="radio" name="addIsHot" value="1"/>是
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="addIsHot" value="2"/>否
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">产地:</label>
+                <div class="col-sm-4">
+                    <select id="addMovieArea"  class="form-control">
+                        <option value="-1">请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">类型:</label>
+                <div class="col-sm-4">
+                    <select id="addMovieType"  class="form-control">
+                        <option value="-1">请选择</option>
+                    </select>
+                </div>
+            </div>
+            
+            
+
+            
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">图片展示</label>
+                <div class="col-sm-4">
+                    <input type="file"  name="addPhoto" id="addPhoto" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">上映时间:</label>
+                <div class="col-sm-4">
+                    <input id="addShowTime"class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">电影简介:</label>
+                <div class="col-sm-4">
+                    <input id="addIntroduce"class="form-control" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+
+<!-- 隐藏的修改界面的 -->
+<div id="updateMovieDiv"  style="display:none">
+
+    <form class="form-horizontal" >
+        <div class="panel-body" >
+            <!-- 存放路径 -->
+            <input type="text"  id="updateMoviePath" value="" readonly>
+            <input type="text"  id="updateMovieId"  readonly>
+            <input type="text"  id="updateCreateTime" value="" readonly>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">电影名称:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="updateMovieName" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">时长</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="updateMovieMins" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">评分</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="updateMovieGrade" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">是否热映:</label>
+                <div class="col-sm-10">
+                    <label class="radio-inline">
+                        <input type="radio" name="updateIsHot" value="1"/>是
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="updateIsHot" value="2"/>否
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">产地:</label>
+                <div class="col-sm-4">
+                    <select id="updateMovieArea"  class="form-control">
+                        <option value="-1">请选择</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">类型:</label>
+                <div class="col-sm-4">
+                    <select id="updateMovieType"  class="form-control">
+                        <option value="-1">请选择</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">图片展示</label>
+                <div class="col-sm-4">
+                    <img src="" id="updatePhoto" width="100" class="img-thumbnail"/>
+                    <input type="file"  name="photos" id="updatePhotos" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">上映时间:</label>
+                <div class="col-sm-4">
+                    <input id="updateShowTime"class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label  class="col-sm-2 control-label">电影简介:</label>
+                <div class="col-sm-4">
+                    <input id="updateIntroduce"class="form-control" />
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+
+</body>
+
+<!-- 用于页面加载之后查询的方法 -->
+<script type="text/javascript">
+
+    $(function(){
+        selectMovieList(1);
+        selectMovieAreaList();
+        selectMovieTypeList();
+
+    })
+
+    function search(){
+        //重新使用ajax加载数据
+        movieTable.ajax.reload();
+    }
+
+
+    //地区下拉框
+    var areaArr;
+    function selectMovieAreaList(){
+        $.ajax({
+            data:{},
+            dataType:"json",
+            url:"http://localhost:8081/MovieController/selectAreaList",
+            type:"post",
+            success:function(data){
+                debugger
+                areaArr = data.data;
+                $("#areaId option:gt(0)").remove();
+                $("#addMovieArea option:gt(0)").remove();
+                for (var i = 0; i < data.data.length; i++) {
+                    $("#areaId").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+                    $("#addMovieArea").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+                }
+                $("#addMovieArea").selectpicker('refresh');
+                $("#areaId").selectpicker('refresh');
+            },
+            error:function(){
+                alert("地区下拉框出错!!!")
+            },
+        })
+    }
+
+    //查询品牌下拉框
+    var typeArr;
+    function selectMovieTypeList(){
+        $.ajax({
+            data:{},
+            dataType:"json",
+            url:"http://localhost:8081/MovieController/selectTypeList",
+            type:"post",
+            success:function(data){
+                typeArr = data.data;
+                $("#typeId option:gt(0)").remove();
+                $("#addMovieType option:gt(0)").remove();
+                for (var i = 0; i < data.data.length; i++) {
+                    $("#typeId").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+                    $("#addMovieType").append("<option value='"+data.data[i].id+"'>"+data.data[i].name+"</option>");
+                }
+                $("#addMovieType").selectpicker('refresh');
+                $("#typeId").selectpicker('refresh');
+            },
+            error:function(){
+                alert("地区下拉框出错!!!")
+            },
+        })
+    }
+
+
+
+
+
+
+    var movieTable;
+    function selectMovieList(pageIndex){
+        movieTable = $("#movieTable").DataTable({
+                //开启服务端模式
+                serverSide:true,
+                //开启是否显示处理状态
+                processing:true,
+                ordering:false,
+                //进行国际化处理配置
+                language: {
+                    "sProcessing": "处理中...",
+                    "sLengthMenu": "显示 _MENU_ 项结果",
+                    "sZeroRecords": "没有匹配结果",
+                    "sInfo": "显示第 _START_ 至 _END_ 项结果，共 _TOTAL_ 项",
+                    "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
+                    "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+                    "sInfoPostFix": "",
+                    "sSearch": "搜索:",
+                    "sUrl": "",
+                    "sEmptyTable": "表中数据为空",
+                    "sLoadingRecords": "载入中...",
+                    "sInfoThousands": ",",
+                    "oPaginate": {
+                        "sFirst": "首页",
+                        "sPrevious": "上页",
+                        "sNext": "下页",
+                        "sLast": "末页"
+                    },
+                    "oAria": {
+                        "sSortAscending": "以升序排列此列",
+                        "sSortDescending": "以降序排列此列"
+                    }
+                },
+                //开启是否显示搜索框
+                searching:true,
+                //设置每页显示条数下拉框的值
+                lengthMenu:[2,5,10,15],
+                ajax:{
+                    //设置请求的地址
+                    url:"http://localhost:8081/MovieController/queryMovieList",
+                    dataSrc:function(f){
+                        if(f.status==200){
+                            f.draw =f.data.draw;
+                            f.recordsTotal=f.data.recordsTotal;
+                            f.recordsFiltered=f.data.recordsFiltered;
+                            return f.data.data;
+                        }else{
+                            return "";
+                        }
+                    },
+                    data:function(p){
+                        //获取查询条件的值
+                        //复选框
+
+                        p.name = $("#name").val();
+                        p.grade = $("#grade").val();
+                        p.isHot = $("[name=isHot]:checked").val();
+                        p.typeId = $("#typeId").val();
+
+                        p.minShowTime = $("#minShowTime").val();
+                        p.maxShowTime = $("#maxShowTime").val();
+                        p.areaId = $("#areaId").val();
+
+
+                    }
+                },
+
+
+
+
+
+                "columns":[
+                    {
+                        "data":"id",
+                        "render":function(data){
+                            return "<input type=\"checkbox\" name=\"id\" value=\"" + data + "\" />";
+                        }
+                    },
+                    {"data":"name"},
+                    {"data":"mins"},
+
+
+                    {
+                        "data":"photo",
+                        "render":function(data, type, full, meta) {
+                            return "<img width='50px' src='" + data +"' class='img-thumbnail'/>";
+                        }
+                    },
+                    {"data":"isHot",
+                        "render":function(data) {
+                            return data == 1?"是":"否";
+                        }
+                    },
+                    {"data":"grade"},
+                    {"data":"introduce"},
+
+                   /* {"data": "person",
+                        "render":function(data, type, full, meta) {
+                            return data.replace("1","幼年").replace("2","少年").replace("3","中年").replace("4","青年").replace("5","老年").replace("6","孕妇");
+                        }
+                    },*/
+
+
+                    {"data":"showTime"},
+                    {"data":"createTime"},
+                    {"data":"updateTime"},
+                    {
+                        "data":"id",
+                        "render":function(data){
+                            return '<div class="btn-group btn-group-xs">'+
+                                '<button type="button" onclick="showUpdateMovieDiv('+data+')" class="btn btn-primary">'+
+                                '	<span class="glyphicon glyphicon-pencil"></span>&nbsp;修改'+
+                                '</button>'+
+                                '<button type="button" onclick="deleteMovie('+data+')" class="btn btn-danger">'+
+                                '	<span class="glyphicon glyphicon-trash"></span>&nbsp;删除'+
+                                '</button>'+
+                                '</div>';
+                        }
+                    }
+                ]
+            }
+        );
+    }
+</script>
+
+
+<!-- 新增 -->
+<script type="text/javascript">
+
+
+    var addMovieDivHTML
+    $(function(){
+
+        addMovieDivHTML = $("#addMovieDiv").html();
+        initMoviePhoto();
+        
+        addProducedDate();
+    })
+
+    function addProducedDate(){
+        $("#addShowTime").datetimepicker({
+            format:"YYYY-MM-DD HH:mm:ss",
+            locale:"zh-CN",
+            showClear:true
+        })
+        
+    }
+
+   
+
+    //添加的弹框里面的文件域
+    function initMoviePhoto(){
+        //使用Fileinput初始化新增商品表单中的商品主图文件域
+        $("#addPhoto").fileinput({
+            language:"zh",//设置语言选项
+            maxFileCount:1,//设置最大上传文件个数
+            //设置文件上传的地址
+            uploadUrl:"http://localhost:8081/MovieController/uploadFile"
+        });
+        //设置文件上传之后的回调函数
+        $("#addPhoto").on("fileuploaded",function(a,b,c,d){
+            //其中b就代表服务器返回的数据
+            var result = b.response;
+            if(result.code == 200){
+                //将图片上传后的路径放入新增商品表单中的用于存放图片路径的隐藏域中
+                $("#addMoviePath").val(result.filePath);
+            }
+        });
+
+    }
+
+
+
+    function showAddMovieDiv(){
+        bootbox.confirm({
+            title:"新增电影",
+            message:$("#addMovieDiv form"),
+            size:"lg",
+            scrollable:true,
+            callback:function(result){
+                //如果点击了确认按钮，则提交新增div表单中的数据
+                if(result){
+
+                    var param = {};
+                    //【1】获取新增div表单中的值
+                    //获取图片名称
+                    param.photo = $("#addMoviePath").val();
+                    //获取名称
+                    param.name = $("#addMovieName").val();
+
+                    param.mins = $("#addMovieMins").val();
+                    param.grade = $("#addMovieGrade").val();
+                    param.isHot = $("[name=addIsHot]:checked").val();
+                    param.areaId = $("#addMovieArea").val();
+                    param.typeId = $("#addMovieType").val();
+                    param.introduce = $("#addIntroduce").val();
+
+
+
+                    //获取日期
+                    param.showTime = $("#addShowTime").val();
+
+                    //发起新增的ajax请求
+                    $.ajax({
+                        url:"http://localhost:8081/MovieController/addMovie",
+                        type:"post",
+                        dataType:"json",
+                        data:param,
+                        success:function(result){
+                            if(result.status == 200){
+                                bootbox.alert({
+                                    title:"<b>成功提示</b>",
+                                    message:"恭喜您添加成功!",
+                                    buttons:{
+                                        ok:{
+                                            label:"确定"
+                                        }
+                                    }
+                                });
+                                search();
+                            }
+                        },
+                        error:function(){
+                            alert("新增失败，请联系管理员！");
+                        }
+                    });
+                }
+                //重新赋值   以防第二次点添加 不出表格
+                $("#addMovieDiv").html(addMovieDivHTML);
+                //重置时间选择   下拉框 图片域
+                initMoviePhoto();
+                addProducedDate();
+                selectMovieAreaList();
+                selectMovieTypeList();
+
+
+            },
+
+            buttons:{
+                confirm:{
+                    label:"确认",
+                    className:"btn btn-success"
+                },
+                cancel:{
+                    label:"取消",
+                    className:"btn btn-danger"
+                }
+            }
+        });
+    }
+
+
+
+</script>
+
+
+<!-- 修改 -->
+<script>
+    var updateMovieDivHTML;
+    $(function(){
+
+        updateMovieDivHTML = $("#updateMovieDiv").html();
+        initUpdateMoviePhoto();
+
+        updateExpiredDate();
+    })
+
+    function updateExpiredDate(){
+        $("#updateExpiredDate").datetimepicker({
+            format:"YYYY-MM-DD HH:mm:ss",
+            locale:"zh-CN",
+            showClear:true
+        })
+        $("#updateProducedDate").datetimepicker({
+            format:"YYYY-MM-DD HH:mm:ss",
+            locale:"zh-CN",
+            showClear:true
+        })
+    }
+
+
+
+    //回显的弹框里面的文件域
+    function initUpdateMoviePhoto(){
+        //使用Fileinput初始化新增商品表单中的商品主图文件域
+        $("#updatePhotos").fileinput({
+            language:"zh",//设置语言选项
+            maxFileCount:1,//设置最大上传文件个数
+            //设置文件上传的地址
+            uploadUrl:"http://localhost:8081/MovieController/uploadFile"
+        });
+        //设置文件上传之后的回调函数
+        $("#updatePhotos").on("fileuploaded",function(a,b,c,d){
+            //其中b就代表服务器返回的数据
+            var result = b.response;
+            if(result.code == 200){
+                //将图片上传后的路径放入新增商品表单中的用于存放图片路径的隐藏域中
+                $("#updateMoviePath").val(e.filePath);
+                $("#updatePhoto").attr("src",e.filePath);
+            }
+        });
+
+    }
+
+
+
+    function showUpdateMovieDiv(id){
+        $.ajax({
+            data:{"id":id},
+            dataType:"json",
+            url:"http://localhost:8081/MovieController/toUpdateMovie",
+            type:"post",
+            success:function(result){
+                bootbox.confirm({
+                    title:"修改电影",
+                    message:$("#updateMovieDiv form"),
+                    size:"lg",
+                    scrollable:true,
+                    callback:function(result){
+
+                        //如果点击了确认按钮，则提交修改div表单中的数据
+                        if(result){
+
+                            var param = {};
+                            //获取id
+                            param.id = $("#updateMovieId").val();
+                            //获取创建时间
+                            param.createTime = $("#updateCreateTime").val();
+                            //获取图片名称
+                            param.photo = $("#updateMoviePath").val();
+                            //获取名称
+                            param.name = $("#updateMovieName").val();
+                            //获取价格
+                            param.mins = $("#updateMovieMins").val();
+                            param.grade = $("#updateMovieGrade").val();
+                            param.isHot = $("[name=updateIsHot]:checked").val();
+
+                            param.areaId = $("#updateMovieArea").val();
+                            //获取品牌
+                            param.typeId = $("#updateMovieType").val();
+                            //获取销量
+                            param.showTime = $("#updateShowTime").val();
+                            //获取库存
+                            param.introduce = $("#updateIntroduce").val();
+                            //获取单选框
+
+                            //发起新增手机的ajax请求
+
+                            $.ajax({
+                                url:"http://localhost:8081/MovieController/updateMovie",
+                                type:"post",
+                                dataType:"json",
+                                data:param,
+                                success:function(result){
+                                    if(result.status == 200){
+                                        bootbox.alert({
+                                            title:"<b>成功提示</b>",
+                                            message:"恭喜您修改成功!",
+                                            buttons:{
+                                                ok:{
+                                                    label:"确定"
+                                                }
+                                            }
+                                        });
+                                        search();
+                                    }
+                                },
+                                error:function(){
+                                    alert("修改失败，请联系管理员！");
+                                }
+                            });
+                        }
+
+                        //重新赋值   以防第二次点 不出表格
+                        $("#updateMovieDiv").html(updateMovieDivHTML);
+                        //重置 文件域 时间选择
+                        initUpdateMoviePhoto();
+                        updateExpiredDate();
+
+                    },
+
+                    buttons:{
+                        confirm:{
+                            label:"确认",
+                            className:"btn btn-success"
+                        },
+                        cancel:{
+                            label:"取消",
+                            className:"btn btn-danger"
+                        }
+                    }
+                });
+
+
+
+
+                //初始化修改电影表单中产地下拉框
+                var areaOptionsHTML = "";
+                for(var i = 0 ; i < areaArr.length ; i ++ ){
+                    areaOptionsHTML += "<option value='" + areaArr[i].id + "'>" + areaArr[i].name + "</option>";
+                }
+                $("#updateMovieArea").append(areaOptionsHTML);
+
+                //初始化修改电影表单中品牌下拉框
+                var brandOptionsHTML = "";
+                for(var i = 0 ; i < typeArr.length ; i ++ ){
+                    brandOptionsHTML += "<option value='" + typeArr[i].id + "'>" + typeArr[i].name + "</option>";
+                }
+                $("#updateMovieType").append(brandOptionsHTML);
+
+                var result = result.data;
+                //回显表单中的数据
+                $("#updateMovieId").val(result.id);
+                $("#updateCreateTime").val(result.createTime);
+                $("#updateMovieName").val(result.name);
+                $("#updateMovieMins").val(result.mins);
+
+                $("#updateMovieGrade").val(result.grade);
+                $("[name=updateIsHot][value="+result.isHot+"]").prop("checked",true);
+
+
+
+                $("#updateMovieArea").val(result.areaId);
+                $("#updateMovieType").val(result.typeId);
+
+
+                //回显图片
+                $("#updatePhoto").attr("src",result.photo);
+                //回显图片路径隐藏域
+                $("#updateMoviePath").val(result.photo);
+
+
+
+                $("#updateIntroduce").val(result.introduce);
+                $("#updateShowTime").val(result.showTime);
+
+
+            },
+            error:function(){
+
+                alert("无法修改   别点了!!!")
+            }
+        })
+
+    }
+
+</script>
+
+
+<!-- 删除 -->
+<script>
+    /*单独删除*/
+    function deleteDrug(id){
+
+        //弹出一个确认框
+        bootbox.confirm({
+            title:"删除提示",
+            message:"您确定要删除吗?",
+            buttons:{
+                //設置確定按鈕的文字和樣式
+                confirm:{
+                    label:"确定",
+                    className:"btn btn-success"
+                },
+                //設置取消按鈕的文字和樣式
+                cancel:{
+                    label:"取消",
+                    className:"btn btn-danger"
+                }
+            },
+            callback:function(result){
+                //如果用户点击了确认按钮
+                if(result){
+                    //发起一个删除服装的ajax请求
+                    $.ajax({
+                        url:"http://localhost:8081/MovieController/deleteMovie",
+                        type:"post",
+                        data:{id:id},
+                        dataType:"json",
+                        success:function(result){
+                            if(result.status == 200){
+                                //重新加载表格中的数据
+                                alert("删除成功")
+                                search();
+                            }else{
+                                alert("删除失败!");
+                            }
+                        },
+                        error:function(){
+                            alert("删除失败!");
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+    /*批量删除*/
+    function batchDelete() {
+
+        var ids = $("[name=id]:checked");
+        if(ids.length > 0){
+            //弹出一个确认框
+            bootbox.confirm({
+                title:"删除提示",
+                message:"您确定要删除吗?",
+                buttons:{
+                    //設置確定按鈕的文字和樣式
+                    confirm:{
+                        label:"确定",
+                        className:"btn btn-success"
+                    },
+                    //設置取消按鈕的文字和樣式
+                    cancel:{
+                        label:"取消",
+                        className:"btn btn-danger"
+                    }
+                },
+                callback:function(result){
+                    if(result){
+                        var idArr = [];
+                        ids.each(function(){
+                            idArr.push(this.value);
+                        });
+                        /*if(ids.length>0)
+                        *
+                        *var idArr = "";
+						idArr.each(function(i,e){
+							idArr += e.value + ",";
+						});
+						idArr = idArr.substring(0,ids.length-1);
+                        *
+                        * */
+
+
+                        //发起一个批量删除电影的ajax请求
+                        $.ajax({
+                            url:"http://localhost:8081/DrugController/batchDeleteMovie",
+                            type:"post",
+                            data:{idArr:idArr},
+                            dataType:"json",
+                            success:function(result){
+                                if(result.success){
+                                    //重新加载表格中的数据
+                                    alert("已删除所选信息!");
+                                    search();
+                                }else{
+                                    alert("批量删除失败!");
+                                }
+                            },
+                            error:function(){
+                                alert("批量删除失败!");
+                            }
+                        });
+                    }
+                }
+            });
+
+        }else{
+            alert("请先选择要删除的电影!");
+        }
+    }
+
+</script>
+
+
+</html>

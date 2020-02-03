@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+	例如namespace="com.szh.mapper.personMapper"就是com.szh.mapper(包名)+personMapper(personMapper.xml文件去除后缀) -->
+<mapper namespace="com.fh.mapper.MapperRole">
+
+    <sql id="SQLWhere">
+        <where>
+            <if test="name != null and name != '' ">
+                and name like concat('%',#{name},'%')
+            </if>
+
+
+            <if test="status != null ">
+                and status = #{status}
+            </if>
+
+
+            <if test="minCreateDate != null">
+                <![CDATA[
+                  and createDate >= #{minCreateDate}
+                ]]>
+            </if>
+            <if test="maxCreateDate != null">
+                <![CDATA[
+                  and createDate <= #{maxCreateDate}
+                ]]>
+            </if>
+
+
+            <if test="minUpdateDate != null">
+                <![CDATA[
+                  and updateDate >= #{minUpdateDate}
+                ]]>
+            </if>
+            <if test="maxUpdateDate != null">
+                <![CDATA[
+                  and updateDate <= #{maxUpdateDate}
+                ]]>
+            </if>
+
+        </where>
+
+    </sql>
+    <select id="selectRoleListCount" parameterType="roleQuery" resultType="long">
+        select count(*) from t_role5
+        <include refid="SQLWhere"></include>
+    </select>
+
+    <select id="selectRoleList" parameterType="roleQuery" resultType="role">
+        select * from t_role5
+        <include refid="SQLWhere"></include>
+        limit #{start},#{length}
+    </select>
+
+    <insert id="addRoleOnOnePage" parameterType="role">
+        insert into t_role5(
+                  name,status,remark,createDate
+                )
+                values(
+                  #{name},#{status},#{remark},#{createDate}
+                )
+    </insert>
+
+    <select id="toUpdateRoleOnOnePage" parameterType="int" resultType="role">
+        select * from t_role5 where id = #{id}
+    </select>
+
+    <update id="updateRoleOnOnePage" parameterType="role">
+
+        update t_role5 set
+                name = #{name},
+                status = #{status},
+                remark = #{remark},
+                createDate = #{createDate},
+                updateDate = #{updateDate}
+            where id = #{id}
+    </update>
+
+    <select id="deleteRole" parameterType="int">
+        delete from t_role5 where id = #{id}
+    </select>
+
+
+    <update id="updateRoleStatus" parameterType="role">
+        update t_role5 set
+                name = #{name},
+                status = #{status},
+                remark = #{remark},
+                createDate = #{createDate},
+                updateDate = #{updateDate}
+            where id = #{id}
+    </update>
+</mapper>
